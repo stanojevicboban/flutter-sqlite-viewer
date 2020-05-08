@@ -1,24 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_sqlcipher/sqflite.dart';
 
 import './sqlite_viewer_values.dart';
 
 class TableList extends StatefulWidget {
   final String databasePath;
+  final String databasePass;
 
-  TableList({@required this.databasePath});
+  TableList({@required this.databasePath, this.databasePass});
 
   @override
-  _TableListState createState() => _TableListState(databasePath: databasePath);
+  _TableListState createState() => _TableListState(databasePath: databasePath,
+          databasePass: databasePass);
 }
 
 class _TableListState extends State<TableList> {
   final String databasePath;
+  final String databasePass;
+
   Future<List> _tables;
 
   _TableListState({
     @required this.databasePath,
+    this.databasePass
   });
 
   @override
@@ -36,7 +41,7 @@ class _TableListState extends State<TableList> {
   }
 
   Future<List> _getTables() async {
-    final db = await openDatabase(databasePath);
+    final db = await openDatabase(databasePath, password: databasePass);
     final tables = await db.rawQuery(
         'SELECT name FROM sqlite_master WHERE type = "table" and name != "sqlite_sequence"');
     if (tables.length > 0) {
@@ -68,7 +73,8 @@ class _TableListState extends State<TableList> {
                           MaterialPageRoute(
                               builder: (_) => DataList(
                                   databasePath: databasePath,
-                                  tableName: snapshot.data[index]["name"])));
+                                  tableName: snapshot.data[index]["name"],
+                                  databasePass: databasePass)));
                     },
                   );
                 });

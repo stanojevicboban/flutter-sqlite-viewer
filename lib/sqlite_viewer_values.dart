@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:json_table/json_table.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_sqlcipher/sqflite.dart';
 
 class DataList extends StatefulWidget {
   final String databasePath;
   final String tableName;
+  final String databasePass;
 
-  DataList({@required this.databasePath, @required this.tableName});
+  DataList({@required this.databasePath, @required this.tableName, this.databasePass});
 
   @override
   _DataListState createState() =>
-      _DataListState(databasePath: databasePath, tableName: tableName);
+      _DataListState(databasePath: databasePath, tableName: tableName, databasePass: databasePass);
 }
 
 class _DataListState extends State<DataList> {
   final String databasePath;
   final String tableName;
+  final String databasePass;
 
   Future<List> _values;
 
-  _DataListState({@required this.databasePath, @required this.tableName});
+  _DataListState({@required this.databasePath, @required this.tableName, this.databasePass});
 
   @override
   void initState() {
@@ -37,7 +39,7 @@ class _DataListState extends State<DataList> {
   }
 
   Future<List> _getValues() async {
-    final db = await openDatabase(databasePath);
+    final db = await openDatabase(databasePath, password: databasePass);
     final values = await db.rawQuery('SELECT * FROM $tableName');
     if (values.length > 0) {
       return values;

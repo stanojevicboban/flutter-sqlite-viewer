@@ -3,17 +3,24 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_sqlcipher/sqflite.dart';
 
 import './sqlite_viewer_tables.dart';
 
 class DatabaseList extends StatefulWidget {
+  final String databasePassword;
+
+  DatabaseList({this.databasePassword});
+
   @override
-  _DatabaseListState createState() => _DatabaseListState();
+  _DatabaseListState createState() => _DatabaseListState(databasePassword: databasePassword);
 }
 
 class _DatabaseListState extends State<DatabaseList> {
   Future<List> _databases;
+  final String databasePassword;
+
+  _DatabaseListState({this.databasePassword});
 
   @override
   void initState() {
@@ -60,7 +67,8 @@ class _DatabaseListState extends State<DatabaseList> {
                           context,
                           MaterialPageRoute(
                               builder: (_) => TableList(
-                                  databasePath: snapshot.data[index].path)));
+                                  databasePath: snapshot.data[index].path,
+                                  databasePass: databasePassword)));
                     },
                   );
                 });
